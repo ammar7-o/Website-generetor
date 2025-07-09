@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Website-Editor</title>
+
+    <meta charset="utf-8" />
+    <meta name="description" content="description-here" />
+    <meta name="keywords" content="keywords-here" />
+    <meta name="author" content="author-here" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="js/lib/grapes.min.js"></script>
+    <script src="js/lib/grapesjs-preset-webpage.min.js"></script>
+
+    <link rel="stylesheet" href="css/lib/grapes.min.css" />
+    <link rel="stylesheet" href="css/lib/grapesjs-preset-webpage.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+
+    <style>
+        .more {
+            width: fit-content;
+            position: absolute;
+            left: 40%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            z-index: 999;
+        }
+
+        #importHtml {
+            width: 70px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="more">
+        <input type="file" id="importHtml" accept=".html" />
+        <button id="exportHtml">Export</button>
+        <button id="toggleHideBtn">Hide</button>
+    </div>
+
+    <div id="editor"></div>
+
+    <div id="styleEditorPanel"
+        style="position:absolute; bottom:40px; left:20px; z-index:999; background:#7e3b46; padding:10px; border:1px solid #ccc; border-radius:6px; width:300px; display:none;">
+        <h4 style="margin:0 0 5px 0;">Edit Styles</h4>
+        <textarea id="styleEditor" style="width:100%; height:100px; font-family:monospace; background:#222; color: white; "></textarea>
+    </div>
+
+    <button id="toggleStyleEditor"
+        style="position:absolute; bottom:10px; left:20px; z-index:1000; background:#7e3b46; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
+        ✏️ Edit Styles
+    </button>
+
+    <script src="js/main.js"></script>
+    <script src="more-js/blocks.js"></script>
+    <script src="more-js/index.js"></script>
+ 
+</body>
+
+</html>
