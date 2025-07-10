@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Website-Generator</title>
+
+    <meta charset="utf-8" />
+    <meta name="description" content="description-here" />
+    <meta name="keywords" content="keywords-here" />
+    <meta name="author" content="author-here" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="js/lib/grapes.min.js"></script>
+    <script src="js/lib/grapesjs-preset-webpage.min.js"></script>
+    <link rel="stylesheet" href="css/lib/grapes.min.css" />
+    <link rel="stylesheet" href="css/lib/grapesjs-preset-webpage.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="more-js/style.css" />
+       
+</head>
+
+<body>
+    <div class="more">
+        <input type="file" id="importHtml" accept=".html" />
+        <button id="exportHtml">Export</button>
+        <button id="toggleHideBtn">Hide</button>
+    </div>
+
+    <div id="editor"></div>
+
+    <div id="styleEditorPanel">
+        <h4>Edit Styles</h4>
+        <textarea id="styleEditor"></textarea>
+    </div>
+
+    <button id="toggleStyleEditor">✏️ Edit Styles</button>
+
+    <button id="toggleHtmlEditor">💻 HTML Editor</button>
+
+    <div id="htmlEditorPanel">
+        <h4>Edit HTML</h4>
+        <textarea id="htmlEditor"></textarea>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="more-js/blocks.js"></script>
+    <script src="more-js/index.js"></script>
+
+
+</body>
+
+</html>
