@@ -13,14 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const htmlPanel = document.getElementById('htmlEditorPanel');
             const htmlTextarea = document.getElementById('htmlEditor');
-            // Removed applyHtmlBtn since applying is live now
+
+            // Create format button
+            const formatBtn = document.createElement('button');
+            formatBtn.textContent = 'Format';
+            formatBtn.style.margin = '5px';
+            htmlPanel.appendChild(formatBtn);
 
             let selectedComponent = null;
             let isUIVisible = true;
             let isStylePanelVisible = false;
             let isHtmlPanelVisible = false;
 
-            // Show/hide top controls
             function setUIVisibility(show) {
                 const display = show ? 'block' : 'none';
                 importBtn.style.display = display;
@@ -39,21 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 isUIVisible = show;
             }
 
-            // Toggle style panel
             toggleStyleBtn.addEventListener('click', () => {
                 isStylePanelVisible = !isStylePanelVisible;
                 stylePanel.style.display = isStylePanelVisible ? 'block' : 'none';
-
                 if (isStylePanelVisible && selectedComponent) {
                     loadStylesToTextarea(selectedComponent);
                 }
             });
 
-            // Toggle HTML panel
             toggleHtmlBtn.addEventListener('click', () => {
                 isHtmlPanelVisible = !isHtmlPanelVisible;
                 htmlPanel.style.display = isHtmlPanelVisible ? 'block' : 'none';
-
                 if (isHtmlPanelVisible) {
                     const fullHtml = `
 <!DOCTYPE html>
@@ -67,20 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
 ${editor.getHtml()}
 </body>
 </html>`;
-                    htmlTextarea.value = fullHtml;
+                    htmlTextarea.value = fullHtml.trim();
                 }
             });
 
-            // Live update editor as user types in HTML editor textarea
             htmlTextarea.addEventListener('input', () => {
                 try {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(htmlTextarea.value, 'text/html');
-
                     const bodyContent = doc.body.innerHTML;
                     const styleTags = [...doc.querySelectorAll('style')];
                     const combinedCss = styleTags.map(style => style.textContent).join('\n');
-
                     editor.setComponents(bodyContent);
                     editor.setStyle(combinedCss);
                 } catch (err) {
@@ -88,28 +85,22 @@ ${editor.getHtml()}
                 }
             });
 
-            // Hide/show all UI
             toggleHideBtn.addEventListener('click', () => {
                 setUIVisibility(!isUIVisible);
             });
 
-            // Load styles of selected component into textarea
             function loadStylesToTextarea(comp) {
                 if (!comp) return;
-
                 const styles = comp.getStyle();
                 const cssString = Object.entries(styles)
                     .filter(([prop, val]) => val)
                     .map(([prop, val]) => `${prop}: ${val};`)
                     .join('\n');
-
                 styleTextarea.value = cssString;
             }
 
-            // Sync style changes from textarea to selected component
             styleTextarea.addEventListener('input', () => {
                 if (!selectedComponent) return;
-
                 const newStyles = {};
                 styleTextarea.value.split('\n').forEach(line => {
                     const [prop, val] = line.split(':').map(x => x && x.trim());
@@ -117,11 +108,9 @@ ${editor.getHtml()}
                         newStyles[prop] = val.replace(/;$/, '');
                     }
                 });
-
                 selectedComponent.setStyle(newStyles);
             });
 
-            // When a component is selected
             editor.on('component:selected', comp => {
                 selectedComponent = comp;
                 if (isStylePanelVisible) {
@@ -129,23 +118,19 @@ ${editor.getHtml()}
                 }
             });
 
-            // Hide UI on preview
             editor.on('run:preview', () => {
                 setUIVisibility(false);
                 stylePanel.style.display = 'none';
                 htmlPanel.style.display = 'none';
             });
 
-            // Restore UI after preview
             editor.on('stop:preview', () => {
                 setUIVisibility(true);
             });
 
-            // Import HTML
             importBtn.addEventListener('change', e => {
                 const file = e.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     const htmlContent = event.target.result;
@@ -155,11 +140,9 @@ ${editor.getHtml()}
                 reader.readAsText(file);
             });
 
-            // Export HTML
             exportBtn.addEventListener('click', () => {
                 const html = editor.getHtml();
                 const css = editor.getCss();
-
                 const fullHtml = `
 <!DOCTYPE html>
 <html lang="en">
@@ -172,7 +155,6 @@ ${editor.getHtml()}
   ${html}
 </body>
 </html>`;
-
                 const blob = new Blob([fullHtml], { type: 'text/html' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
@@ -182,7 +164,26 @@ ${editor.getHtml()}
                 document.body.removeChild(link);
             });
 
-            // Initial UI state
+            // Simple HTML formatter (no external lib)
+            function formatHtml(html) {
+                let tab = 0;
+                return html
+                    .replace(/>\s*</g, '>\n<')
+                    .split('\n')
+                    .map((line) => {
+                        if (line.match(/^<\/\w/)) tab--;
+                        const indent = '  '.repeat(tab);
+                        if (line.match(/^<[^!?\/].*>$/) && !line.endsWith('/>')) tab++;
+                        return indent + line;
+                    })
+                    .join('\n')
+                    .trim();
+            }
+
+            formatBtn.addEventListener('click', () => {
+                htmlTextarea.value = formatHtml(htmlTextarea.value);
+            });
+
             setUIVisibility(true);
             stylePanel.style.display = 'none';
             htmlPanel.style.display = 'none';
@@ -194,7 +195,3 @@ ${editor.getHtml()}
 
     waitForEditor();
 });
-
-
-
-
